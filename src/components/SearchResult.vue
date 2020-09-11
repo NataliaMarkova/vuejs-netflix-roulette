@@ -16,31 +16,18 @@
         </div>
       </div>
     </div>
-    <section>
-      <div class="row">
-        <div v-if="movies.length === 0" class="col text-center no-found" >
-          <h2 class="text-light font-weight-light">
-            No films found
-          </h2>
-        </div>
-        <div v-else class="d-flex align-content-stretch flex-wrap movies justify-content-around">
-          <template v-for="movie in movies">
-            <MovieThumbnail :movie="movie" :key="movie.id"></MovieThumbnail>
-          </template>
-        </div>
-      </div>
-    </section>
+    <MovieList :movies = "sortedMovies"/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
-import MovieThumbnail from '@/components/MovieThumbnail.vue';
+import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
 
 @Component({
-  components: { MovieThumbnail, OptionButton },
+  components: { MovieList, OptionButton },
 })
 export default class SearchResult extends Vue {
   @Prop({
@@ -48,7 +35,7 @@ export default class SearchResult extends Vue {
   })
   private movies: Array<Movie>;
 
-  private sortBy = 'release'
+  private sortBy = 'release';
 
   get sortByReleaseDate(): boolean {
     return this.sortBy === 'release';
@@ -56,6 +43,13 @@ export default class SearchResult extends Vue {
 
   get sortByRating(): boolean {
     return this.sortBy === 'rating';
+  }
+
+  get sortedMovies(): Array<Movie> {
+    if (this.sortBy === 'release') {
+      return this.movies.sort((a: Movie, b: Movie) => b.releaseDate.localeCompare(a.releaseDate));
+    }
+    return this.movies.sort((a: Movie, b: Movie) => b.voteAverage - a.voteAverage);
   }
 
   sort(sortBy: string): void {

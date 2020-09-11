@@ -1,22 +1,24 @@
 <template>
-  <div>
-    <figure>
-        <img :src="require(`@/assets/${movie.image}`)">
-        <figcaption>
-          <div class="row">
-            <div class="col-sm-9">
-              <h4 class="text-secondary font-weight-light">{{ movie.title }}</h4>
-              <p class="text-secondary font-weight-light">{{ movie.description }}</p>
+  <router-link :to="'/movie/' + movie.id" >
+    <div>
+      <figure>
+          <img :src="movie.posterPath">
+          <figcaption>
+            <div class="row">
+              <div class="col-sm-9">
+                <h4 class="text-secondary font-weight-light">{{ movie.title }}</h4>
+                <p class="text-secondary font-weight-light">{{ movie.tagline }}</p>
+              </div>
+              <div class="col-sm-3 float-right">
+                <button type="button" class="btn btn-sm btn-outline-secondary float-right">
+                  {{ movie.releaseYear() }}
+                </button>
+              </div>
             </div>
-            <div class="col-sm-3 float-right">
-              <button type="button" class="btn btn-sm btn-outline-secondary float-right">
-                {{ movie.year }}
-              </button>
-            </div>
-          </div>
-        </figcaption>
-    </figure>
-  </div>
+          </figcaption>
+      </figure>
+    </div>
+  </router-link>
 </template>
 
 <script lang="ts">
