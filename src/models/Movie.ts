@@ -1,25 +1,44 @@
+import { JsonObject, JsonProperty } from 'json2typescript';
+
+@JsonObject('Movie')
 export class Movie {
-  id: number;
+  @JsonProperty('id', Number)
+  id = 0;
 
-  title: string;
+  @JsonProperty('title', String)
+  title = '';
 
-  description?: string;
+  @JsonProperty('tagline', String)
+  tagline = '';
 
-  longDescription?: string;
+  @JsonProperty('overview', String)
+  overview = '';
 
-  remark?: string;
+  @JsonProperty('release_date', String)
+  releaseDate = '';
 
-  year: number;
+  @JsonProperty('vote_average', Number)
+  voteAverage = 0;
 
-  rating?: number;
+  @JsonProperty('vote_count', Number)
+  voteCount = 0;
 
-  duration?: number;
+  @JsonProperty('runtime', Number)
+  runtime = 0;
 
-  image?: string;
+  @JsonProperty('poster_path', String)
+  posterPath = '';
 
-  constructor(title: string, year: number) {
-    this.id = -1;
-    this.title = title;
-    this.year = year;
+  @JsonProperty('budget', Number)
+  budget = 0;
+
+  @JsonProperty('revenue', Number)
+  revenue = 0;
+
+  @JsonProperty('genres', [String])
+  genres: Array<string> = [];
+
+  public releaseYear(): string {
+    return this.releaseDate.substring(0, 4);
   }
 }
