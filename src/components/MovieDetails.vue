@@ -52,6 +52,9 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import Logo from '@/components/Logo.vue';
+import { namespace } from 'vuex-class';
+
+const movieState = namespace('MovieState');
 
 @Component({
   components: { Logo },
@@ -60,13 +63,11 @@ export default class MovieDetails extends Vue {
   @Prop()
   private id: number;
 
-  @Prop({
-    default: [],
-  })
-  private movies: Array<Movie>;
+  @movieState.Getter('movieById')
+  private getMovieById: (id: number) => Movie;
 
   get movie(): Movie {
-    return this.movies.find((movie) => movie.id === this.id);
+    return this.getMovieById(this.id);
   }
 }
 

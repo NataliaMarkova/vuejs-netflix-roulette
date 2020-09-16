@@ -16,14 +16,15 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
+import { namespace } from 'vuex-class';
+
+const movieState = namespace('MovieState');
 
 @Component({
   components: { MovieList, OptionButton },
 })
 export default class SearchResultDetails extends Vue {
-  @Prop({
-    default: [],
-  })
+  @movieState.State
   private movies: Array<Movie>;
 
   @Prop()

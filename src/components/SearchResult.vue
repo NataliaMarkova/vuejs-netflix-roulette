@@ -2,8 +2,8 @@
   <div class="container" >
     <div class="row filter-header text-light">
       <div class="col col-lg-6">
-        <h7 v-show="movies.length > 0" class="align-middle font-weight-bold">
-          {{ movies.length }} movie(s) found
+        <h7 v-show="count > 0" class="align-middle font-weight-bold">
+          {{ count }} movie(s) found
         </h7>
       </div>
       <div class="col col-lg-2 text-right align-items-center">
@@ -25,15 +25,19 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
+import { namespace } from 'vuex-class';
+
+const movieState = namespace('MovieState');
 
 @Component({
   components: { MovieList, OptionButton },
 })
 export default class SearchResult extends Vue {
-  @Prop({
-    default: [],
-  })
+  @movieState.State
   private movies: Array<Movie>;
+
+  @movieState.Getter('movieCount')
+  private count: number;
 
   private sortBy = 'release';
 
