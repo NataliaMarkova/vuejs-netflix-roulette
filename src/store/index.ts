@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import MovieState from '@/store/modules/movieState';
+import movies from '@/store/modules/movies';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    MovieState,
+    movies,
   },
 });
