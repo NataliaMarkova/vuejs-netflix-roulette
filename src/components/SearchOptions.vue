@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import OptionButton from '@/components/OptionButton.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import Logo from '@/components/Logo.vue';
