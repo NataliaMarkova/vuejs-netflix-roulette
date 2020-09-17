@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <MovieDetails :id = "id" />
-    <SearchResultDetails :searchText = "searchText" :searchBy = "searchBy" />
+    <SearchResultDetails />
     <Footer />
   </div>
 </template>
@@ -17,10 +17,6 @@ import Footer from '@/components/Footer.vue';
   components: { MovieDetails, SearchResultDetails, Footer },
 })
 export default class Details extends Vue {
-  private searchBy = 'genre';
-
-  private searchText = 'Drama';
-
   @Prop()
   private id: number;
 }

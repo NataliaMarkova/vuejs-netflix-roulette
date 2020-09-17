@@ -5,10 +5,10 @@
         <Logo/>
       </div>
     </div>
-    <SearchBar :searchText.sync="searchText" />
+    <SearchBar />
     <div class="row justify-content-md-center align-items-center search-by">
       <div class="col col-lg-2">
-        <h6 class="font-weight-light text-uppercase text-light align-middle">Search by {{ searchText }}</h6>
+        <h6 class="font-weight-light text-uppercase text-light align-middle">Search by</h6>
       </div>
       <div class="col col-lg-8">
         <div class="btn-group" role="group" aria-label="Search by">
@@ -22,31 +22,32 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import OptionButton from '@/components/OptionButton.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import Logo from '@/components/Logo.vue';
+import { namespace } from 'vuex-class';
+
+const movies = namespace('movies');
 
 @Component({
   components: { SearchBar, OptionButton, Logo },
 })
 export default class SearchOptions extends Vue {
-  searchBy = 'title';
+  @movies.State
+  private searchBy: string;
 
-  // @Prop()
-  searchText = '';
+  @movies.Getter
+  private searchByTitle: boolean;
 
-  get searchByTitle(): boolean {
-    return this.searchBy === 'title';
-  }
+  @movies.Getter
+  private searchByGenre: boolean;
 
-  get searchByGenre(): boolean {
-    return this.searchBy === 'genre';
-  }
+  @movies.Mutation
+  public setSearchBy: (searchBy: string) => void;
 
-  search(searchBy: string): void {
-    this.searchBy = searchBy;
-    this.$emit('search', this.searchBy, this.searchText);
+  private search(searchBy: string): void {
+    this.setSearchBy(searchBy);
   }
 }
 

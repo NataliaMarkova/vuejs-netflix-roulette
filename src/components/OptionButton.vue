@@ -18,7 +18,7 @@ export default class OptionButton extends Vue {
   @Prop()
   private active: boolean
 
-  emitValue(): void {
+  private emitValue(): void {
     this.$emit('clicked', this.value);
   }
 }

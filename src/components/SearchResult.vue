@@ -16,48 +16,43 @@
         </div>
       </div>
     </div>
-    <MovieList :movies = "sortedMovies"/>
+    <MovieList :movies = "movies" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
 import { namespace } from 'vuex-class';
 
-const movieState = namespace('MovieState');
+const movies = namespace('movies');
 
 @Component({
   components: { MovieList, OptionButton },
 })
 export default class SearchResult extends Vue {
-  @movieState.State
+  @movies.Getter
   private movies: Array<Movie>;
 
-  @movieState.Getter('movieCount')
+  @movies.Getter('movieCount')
   private count: number;
 
-  private sortBy = 'release';
+  @movies.State
+  private sortBy: number;
 
-  get sortByReleaseDate(): boolean {
-    return this.sortBy === 'release';
-  }
+  @movies.Getter
+  private sortByReleaseDate: boolean;
 
-  get sortByRating(): boolean {
-    return this.sortBy === 'rating';
-  }
+  @movies.Getter
+  private sortByRating: boolean;
 
-  get sortedMovies(): Array<Movie> {
-    if (this.sortBy === 'release') {
-      return this.movies.sort((a: Movie, b: Movie) => b.releaseDate.localeCompare(a.releaseDate));
-    }
-    return this.movies.sort((a: Movie, b: Movie) => b.voteAverage - a.voteAverage);
-  }
+  @movies.Mutation
+  private setSortBy: (sortBy: string) => void
 
-  sort(sortBy: string): void {
-    this.sortBy = sortBy;
+  private sort(sortBy: string): void {
+    this.setSortBy(sortBy);
   }
 }
 

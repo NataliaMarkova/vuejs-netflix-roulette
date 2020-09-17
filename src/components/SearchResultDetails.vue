@@ -12,25 +12,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
 import { namespace } from 'vuex-class';
 
-const movieState = namespace('MovieState');
+const movies = namespace('movies');
 
 @Component({
   components: { MovieList, OptionButton },
 })
 export default class SearchResultDetails extends Vue {
-  @movieState.State
+  @movies.Getter
   private movies: Array<Movie>;
 
-  @Prop()
+  @movies.State
   private searchText: string;
 
-  @Prop()
+  @movies.State
   private searchBy: string;
 }
 
