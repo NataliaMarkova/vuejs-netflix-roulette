@@ -37,8 +37,4 @@ export class Movie {
 
   @JsonProperty('genres', [String])
   genres: Array<string> = [];
-
-  public releaseYear(): string {
-    return this.releaseDate.substring(0, 4);
-  }
 }

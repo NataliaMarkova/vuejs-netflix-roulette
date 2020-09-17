@@ -30,10 +30,10 @@
         </div>
         <div class="row">
           <div class="col col-md-2">
-            <h4 class="text-danger font-weight-light">{{ movie.releaseYear() }}</h4>
+            <h4 class="text-danger font-weight-light">{{ movie.releaseDate | year }}</h4>
           </div>
           <div class="col col-md-2">
-            <h4 v-if="movie.runtime" class="text-danger font-weight-light">{{ movie.runtime }} min</h4>
+            <h4 class="text-danger font-weight-light">{{ movie.runtime | minutes }}</h4>
           </div>
         </div>
         <div class="row">

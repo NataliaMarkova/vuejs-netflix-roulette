@@ -1,21 +1,21 @@
 <template>
-  <router-link :to="'/movie/' + movie.id" >
+  <router-link :to= "'/movie/' + movie.id">
     <div>
       <figure>
-          <img :src="movie.posterPath">
-          <figcaption>
-            <div class="row">
-              <div class="col-sm-9">
-                <h4 class="text-secondary font-weight-light">{{ movie.title }}</h4>
-                <p class="text-secondary font-weight-light">{{ movie.tagline }}</p>
-              </div>
-              <div class="col-sm-3 float-right">
-                <button type="button" class="btn btn-sm btn-outline-secondary float-right">
-                  {{ movie.releaseYear() }}
-                </button>
-              </div>
+        <img :src = "movie.posterPath">
+        <figcaption>
+          <div class="row">
+            <div class="col-sm-9">
+              <h4 class="text-secondary font-weight-light">{{ movie.title }}</h4>
+              <p class="text-secondary font-weight-light">{{ movie.tagline }}</p>
             </div>
-          </figcaption>
+            <div class="col-sm-3 float-right">
+              <button type="button" class="btn btn-sm btn-outline-secondary float-right">
+                {{ movie.releaseDate | year }}
+              </button>
+            </div>
+          </div>
+        </figcaption>
       </figure>
     </div>
   </router-link>

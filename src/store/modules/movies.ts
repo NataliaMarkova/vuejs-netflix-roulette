@@ -14,6 +14,7 @@ const RELEASE = 'release';
 const RATING = 'rating';
 const TITLE = 'title';
 const GENRE = 'genre';
+const DEFAULT_PAGE_SIZE = 3;
 
 @Module({ namespaced: true })
 class Movies extends VuexModule {
@@ -82,6 +83,17 @@ class Movies extends VuexModule {
     const { commit } = this.context;
     const jsonMovies: Movie[] = jsonToMovieConverter.convertToMovieArray(moviesJson);
     commit('setAllMovies', jsonMovies);
+  }
+
+  @Action
+  async nextMovies(page?: number, size?: number): Promise<Array<Movie>> {
+    const pageNumber = page || 0;
+    const pageSize = size || DEFAULT_PAGE_SIZE;
+
+    const start = pageNumber * pageSize;
+    const end = start + pageSize;
+
+    return this.movies.slice(start, end);
   }
 
   private get filteredMovies(): Movie[] {

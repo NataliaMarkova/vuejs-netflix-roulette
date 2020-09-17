@@ -1,23 +1,23 @@
 <template>
-  <router-link :to="'/'" >
-    <footer class="row justify-content-md-center">
-      <div class="footer col justify-content-md-center">
-        <div class="col col-md-auto text-center">
-          <img src="../assets/logo.png" class="logo" alt="Netflix Roulette logo">
-        </div>
+  <footer class="row justify-content-md-center">
+    <div class="footer col justify-content-md-center">
+      <div class="col col-md-auto text-center">
+        <Logo />
       </div>
-    </footer>
-  </router-link>
+    </div>
+  </footer>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import Logo from '@/components/Logo.vue';
 
-@Component
+@Component({
+  components: { Logo },
+})
 export default class Footer extends Vue {
 
 }
-
 </script>
 
 <style>
