@@ -16,13 +16,12 @@
         </div>
       </div>
     </div>
-    <MovieList :movies = "movies" />
+    <MovieList />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { Movie } from '@/models/Movie';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
 import { namespace } from 'vuex-class';
@@ -33,9 +32,6 @@ const movies = namespace('movies');
   components: { MovieList, OptionButton },
 })
 export default class SearchResult extends Vue {
-  @movies.Getter
-  private movies: Array<Movie>;
-
   @movies.Getter('movieCount')
   private count: number;
 
