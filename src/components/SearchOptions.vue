@@ -12,8 +12,8 @@
       </div>
       <div class="col col-lg-8">
         <div class="btn-group" role="group" aria-label="Search by">
-          <OptionButton title="Title" value="title" :active="searchByTitle" @clicked="search" ></OptionButton>
-          <OptionButton title="Genre" value="genre" :active="searchByGenre" @clicked="search" ></OptionButton>
+          <OptionButton title="Title" :value="title" :active="searchByTitle" @clicked="search" ></OptionButton>
+          <OptionButton title="Genre" :value="genre" :active="searchByGenre" @clicked="search" ></OptionButton>
         </div>
       </div>
     </div>
@@ -27,6 +27,7 @@ import OptionButton from '@/components/OptionButton.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import Logo from '@/components/Logo.vue';
 import { namespace } from 'vuex-class';
+import { TITLE, GENRE } from '@/models/Constants';
 
 const movies = namespace('movies');
 
@@ -46,8 +47,16 @@ export default class SearchOptions extends Vue {
   @movies.Mutation
   public setSearchBy: (searchBy: string) => void;
 
-  private search(searchBy: string): void {
+  @movies.Action
+  private retrieveMovies: () => Promise<any>;
+
+  private readonly title = TITLE;
+
+  private readonly genre = GENRE;
+
+  private async search(searchBy: string): Promise<any> {
     this.setSearchBy(searchBy);
+    await this.retrieveMovies();
   }
 }
 

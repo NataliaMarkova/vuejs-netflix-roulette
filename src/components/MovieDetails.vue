@@ -10,14 +10,14 @@
     </div>
     <div class="row">
       <div class="col col-md-4 text-center">
-        <img class="movie-img" :src="movie.posterPath">
+        <img class="movie-img" :src = "movie.posterPath">
       </div>
       <div class="col col-md-7">
         <div class="row">
           <div class="col">
             <h1 class="text-light font-weight-light text-uppercase">
               {{ movie.title }}&nbsp;&nbsp;
-              <span class="badge badge-pill badge-outline-info align-middle font-weight-light">
+              <span v-if = "movie.voteAverage" class="badge badge-pill badge-outline-info align-middle font-weight-light">
                 {{ movie.voteAverage }}
               </span>
             </h1>
@@ -63,11 +63,17 @@ export default class MovieDetails extends Vue {
   @Prop()
   private id: number;
 
-  @movies.Getter('movieById')
-  private getMovieById: (id: number) => Movie;
+  @movies.Action
+  private getMovieById: (id: number) => Promise<Movie>;
 
-  private get movie(): Movie {
-    return this.getMovieById(this.id);
+  private movie: Movie = new Movie();
+
+  mounted() {
+    this.retreiveMovieData();
+  }
+
+  private retreiveMovieData(): void {
+    this.getMovieById(this.id).then((data) => { this.movie = data; });
   }
 }
 

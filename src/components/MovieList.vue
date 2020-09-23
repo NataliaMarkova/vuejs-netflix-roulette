@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="row">
-      <div v-if="movies.length === 0" class="col text-center no-found" >
+      <div v-if="movieCount === 0" class="col text-center no-found" >
         <h2 class="text-light font-weight-light">
           No films found
         </h2>
@@ -28,28 +28,24 @@ const movies = namespace('movies');
   components: { MovieThumbnail },
 })
 export default class MovieList extends Vue {
+  @movies.State
+  private movies: Movie[];
+
+  @movies.State
+  private movieCount: number;
+
   @movies.Action
-  nextMovies!: (page?: number, size?: number) => Array<Movie>;
+  private retrieveMovies: () => Promise<any>;
 
-  private movies: Array<Movie> = [];
-
-  private page = 0;
+  @movies.Action
+  private retrieveMoreMovies: () => Promise<any>;
 
   private async intersected(): Promise<any> {
-    try {
-      const moreMovies = await this.nextMovies(this.page);
-      this.movies = [...this.movies, ...moreMovies];
-      this.page += 1;
-    } catch (error) {
-      console.error(error);
-      return Promise.reject();
-    }
-    return Promise.resolve();
+    await this.retrieveMoreMovies();
   }
 
   async mounted() {
-    this.movies = await this.nextMovies(this.page);
-    this.page += 1;
+    await this.retrieveMovies();
   }
 }
 

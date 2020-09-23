@@ -4,21 +4,22 @@ import {
   Mutation,
   Action,
 } from 'vuex-module-decorators';
-import { JsonToMovieConverter } from '@/services/jsonToMovieConverter';
+import { MovieApiService } from '@/services/movieApiService';
 import { Movie } from '@/models/Movie';
-import moviesJson from '@/assets/movies.json';
-
-const jsonToMovieConverter = new JsonToMovieConverter();
-
-const RELEASE = 'release';
-const RATING = 'rating';
-const TITLE = 'title';
-const GENRE = 'genre';
-const DEFAULT_PAGE_SIZE = 3;
+import {
+  TITLE,
+  GENRE,
+  RELEASE,
+  RATING,
+  DESC,
+  LIMIT,
+} from '@/models/Constants';
 
 @Module({ namespaced: true })
 class Movies extends VuexModule {
-  allMovies: Movie[] = [];
+  private movieApiService = new MovieApiService();
+
+  movies: Movie[] = [];
 
   sortBy = RELEASE;
 
@@ -26,21 +27,13 @@ class Movies extends VuexModule {
 
   searchText = '';
 
-  get movieCount(): number {
-    return this.movies.length;
-  }
+  movieCount = 0;
 
-  get movieById() {
-    return (id: number): Movie => this.allMovies.find((movie) => movie.id === id) || new Movie();
-  }
+  limit = LIMIT;
 
-  get movies(): Array<Movie> {
-    const { filteredMovies, sortByReleaseDate } = this;
-    if (sortByReleaseDate) {
-      return [...filteredMovies.sort((a: Movie, b: Movie) => b.releaseDate.localeCompare(a.releaseDate))];
-    }
-    return [...filteredMovies.sort((a: Movie, b: Movie) => b.voteAverage - a.voteAverage)];
-  }
+  offset = 0;
+
+  sortOrder = DESC;
 
   get sortByReleaseDate(): boolean {
     return this.sortBy === RELEASE;
@@ -58,9 +51,30 @@ class Movies extends VuexModule {
     return this.searchBy === GENRE;
   }
 
+  get params(): URLSearchParams {
+    const params = new URLSearchParams();
+    params.append('offset', this.offset.toString(10));
+    params.append('limit', this.limit.toString(10));
+    params.append('searchBy', this.searchBy);
+    params.append('sortBy', this.sortBy);
+    params.append('sortOrder', this.sortOrder);
+    params.append('search', this.searchText);
+    return params;
+  }
+
   @Mutation
-  setAllMovies(movies: Movie[]) {
-    this.allMovies = movies;
+  setMovies(movies: Movie[]): void {
+    this.movies = movies;
+  }
+
+  @Mutation
+  addMovies(movies: Movie[]): void {
+    this.movies = [...this.movies, ...movies];
+  }
+
+  @Mutation
+  setMovieCount(movieCount: number): void {
+    this.movieCount = movieCount;
   }
 
   @Mutation
@@ -78,33 +92,41 @@ class Movies extends VuexModule {
     this.searchText = searchText.trim();
   }
 
-  @Action({ rawError: true })
-  loadMoviesFromJson(): void {
-    const { commit } = this.context;
-    const jsonMovies: Movie[] = jsonToMovieConverter.convertToMovieArray(moviesJson);
-    commit('setAllMovies', jsonMovies);
+  @Mutation
+  resetOffset(): void {
+    this.offset = 0;
+  }
+
+  @Mutation
+  increaseOffset(): void {
+    this.offset += this.limit;
   }
 
   @Action
-  async nextMovies(page?: number, size?: number): Promise<Array<Movie>> {
-    const pageNumber = page || 0;
-    const pageSize = size || DEFAULT_PAGE_SIZE;
-
-    const start = pageNumber * pageSize;
-    const end = start + pageSize;
-
-    return this.movies.slice(start, end);
+  async getMovieById(id: number): Promise<Movie> {
+    const movie = await this.movieApiService.getMovieById(id);
+    return movie;
   }
 
-  private get filteredMovies(): Movie[] {
-    const searchText = this.searchText.toLowerCase();
-    if (this.searchText === '') {
-      return this.allMovies;
-    }
-    if (this.searchByGenre) {
-      return this.allMovies.filter((movie) => movie.genres.find((genre) => genre.toLowerCase().indexOf(searchText) > -1));
-    }
-    return this.allMovies.filter((movie) => movie.title.toLowerCase().indexOf(searchText) > -1);
+  @Action({ rawError: true })
+  async retrieveMovies(): Promise<Movie[]> {
+    const { commit } = this.context;
+    commit('resetOffset');
+    const { movies, count } = await this.movieApiService.getMovies(this.params);
+    commit('setMovies', movies);
+    commit('increaseOffset');
+    commit('setMovieCount', count);
+    return movies;
+  }
+
+  @Action({ rawError: true })
+  async retrieveMoreMovies(): Promise<Movie[]> {
+    const { commit } = this.context;
+    const { movies, count } = await this.movieApiService.getMovies(this.params);
+    commit('addMovies', movies);
+    commit('increaseOffset');
+    commit('setMovieCount', count);
+    return movies;
   }
 }
 
