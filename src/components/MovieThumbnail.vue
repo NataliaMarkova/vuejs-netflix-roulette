@@ -2,7 +2,7 @@
   <router-link :to= "'/movie/' + movie.id">
     <div>
       <figure>
-        <img :src = "movie.posterPath">
+        <img :src = "posterPath">
         <figcaption>
           <div class="row">
             <div class="col-sm-9">
@@ -17,6 +17,7 @@
           </div>
         </figcaption>
       </figure>
+      <Observer @intersected="intersected" />
     </div>
   </router-link>
 </template>
@@ -29,6 +30,12 @@ import { Movie } from '@/models/Movie';
 export default class MovieThumbnail extends Vue {
   @Prop()
   private movie: Movie;
+
+  private posterPath = '';
+
+  private intersected(): void {
+    this.posterPath = this.movie.posterPath;
+  }
 }
 
 </script>

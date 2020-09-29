@@ -2,17 +2,17 @@
   <div class="container" >
     <div class="row filter-header text-light">
       <div class="col col-lg-6">
-        <h7 v-show="count > 0" class="align-middle font-weight-bold">
+        <h5 v-show="count > 0" class="align-middle font-weight-bold">
           {{ count }} movie(s) found
-        </h7>
+        </h5>
       </div>
       <div class="col col-lg-2 text-right align-items-center">
         <h5 class="align-bottom">sort by</h5>
       </div>
       <div class="col col-lg-3">
         <div class="btn-group" role="group" aria-label="Sort by">
-          <OptionButton title="Release date" value="release" :active="sortByReleaseDate" @clicked="sort" ></OptionButton>
-          <OptionButton title="Rating" value="rating" :active="sortByRating" @clicked="sort" ></OptionButton>
+          <OptionButton title="Release date" :value = "release" :active = "sortByReleaseDate" @clicked = "sort" ></OptionButton>
+          <OptionButton title="Rating" :value = "rating" :active = "sortByRating" @clicked = "sort" ></OptionButton>
         </div>
       </div>
     </div>
@@ -25,6 +25,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
 import { namespace } from 'vuex-class';
+import { RELEASE, RATING } from '@/models/Constants';
 
 const movies = namespace('movies');
 
@@ -32,7 +33,7 @@ const movies = namespace('movies');
   components: { MovieList, OptionButton },
 })
 export default class SearchResult extends Vue {
-  @movies.Getter('movieCount')
+  @movies.State('movieCount')
   private count: number;
 
   @movies.State
@@ -47,8 +48,16 @@ export default class SearchResult extends Vue {
   @movies.Mutation
   private setSortBy: (sortBy: string) => void
 
-  private sort(sortBy: string): void {
+  @movies.Action
+  private retrieveMovies: () => Promise<any>;
+
+  private readonly release = RELEASE;
+
+  private readonly rating = RATING;
+
+  private async sort(sortBy: string): Promise<any> {
     this.setSortBy(sortBy);
+    await this.retrieveMovies();
   }
 }
 

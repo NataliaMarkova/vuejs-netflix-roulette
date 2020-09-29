@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <MovieDetails :id = "id" />
+    <MovieDetails :id = "id" :key = "id" />
     <SearchResultDetails />
     <Footer />
   </div>

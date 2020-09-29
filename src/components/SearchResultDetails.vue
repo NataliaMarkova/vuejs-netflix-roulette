@@ -2,9 +2,9 @@
   <div class="container" >
     <div class="row filter-header text-light">
       <div class="col col-lg-6">
-        <h7 class="align-middle font-weight-bold">
+        <h5 class="align-middle font-weight-bold">
           Films by {{ searchText }} {{ searchBy }}
-        </h7>
+        </h5>
       </div>
     </div>
     <MovieList />
