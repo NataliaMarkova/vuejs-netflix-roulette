@@ -1,5 +1,5 @@
 <template>
-  <footer class="row justify-content-md-center">
+  <footer class="row fixed-bottom justify-content-md-center">
     <div class="footer col justify-content-md-center">
       <div class="col col-md-auto text-center">
         <Logo />

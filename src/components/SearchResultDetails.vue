@@ -3,31 +3,25 @@
     <div class="row filter-header text-light">
       <div class="col col-lg-6">
         <h5 class="align-middle font-weight-bold">
-          Films by {{ searchText }} {{ searchBy }}
+          Films by {{ genre }} genre
         </h5>
       </div>
     </div>
-    <MovieList />
+    <MovieList :genre = "genre" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
-import { namespace } from 'vuex-class';
-
-const movies = namespace('movies');
 
 @Component({
   components: { MovieList, OptionButton },
 })
 export default class SearchResultDetails extends Vue {
-  @movies.State
-  private searchText: string;
-
-  @movies.State
-  private searchBy: string;
+  @Prop()
+  private genre: string;
 }
 
 </script>

@@ -12,30 +12,17 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { namespace } from 'vuex-class';
-
-const movies = namespace('movies');
 
 @Component
 export default class SearchBar extends Vue {
-  @movies.State
-  private searchText;
-
   private search = '';
 
-  @movies.Mutation('setSearchText')
-  private updateSearchText: (searchText: string) => void;
-
-  @movies.Action
-  private retrieveMovies: () => Promise<any>;
-
-  async doSearch(): Promise<any> {
-    this.updateSearchText(this.search);
-    await this.retrieveMovies();
+  doSearch(): void {
+    this.$router.push({ path: '/', query: { ...this.$route.query, ...{ search: this.search.trim() } } });
   }
 
   mounted() {
-    this.search = this.searchText || '';
+    this.search = this.$route.query.search || '';
   }
 }
 

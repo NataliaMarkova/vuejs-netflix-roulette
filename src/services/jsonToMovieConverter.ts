@@ -11,7 +11,7 @@ export class JsonToMovieConverter {
     this.jsonConvert.valueCheckingMode = ValueCheckingMode.ALLOW_NULL;
   }
 
-  public convert(data: any): Movie {
+  public convert(data: unknown): Movie {
     try {
       return this.jsonConvert.deserializeObject(data, Movie);
     } catch (e) {
@@ -19,7 +19,7 @@ export class JsonToMovieConverter {
     }
   }
 
-  public convertToArray(json: any[]): Movie[] {
+  public convertToArray(json: unknown[]): Movie[] {
     try {
       return this.jsonConvert.deserializeArray(json, Movie);
     } catch (e) {

@@ -2,22 +2,30 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Home from '../views/Home.vue';
 import Details from '../views/Details.vue';
+import NotFound from '../views/NotFound.vue';
 
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home,
   },
   {
-    path: '/movie/:id',
-    name: 'movieDetails',
+    path: '/movie/:id(\\d+)',
+    name: 'movie',
     component: Details,
-    props: (route) => ({
-      id: parseInt(route.params.id, 10),
-    }),
+  },
+  {
+    path: '/404',
+    name: 'not-found',
+    component: NotFound,
+  },
+  {
+    path: '*',
+    name: 'default',
+    component: NotFound,
   },
 ];
 

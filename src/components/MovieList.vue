@@ -10,17 +10,18 @@
         <template v-for = "movie in movies">
           <MovieThumbnail :movie = "movie" :key = "movie.id"></MovieThumbnail>
         </template>
-        <Observer @intersected="intersected" />
+        <Observer @intersected = "intersected" />
       </div>
     </div>
   </section>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import MovieThumbnail from '@/components/MovieThumbnail.vue';
 import { namespace } from 'vuex-class';
+import { SearchParamsService } from '@/services/searchParamsService';
 
 const movies = namespace('movies');
 
@@ -28,24 +29,36 @@ const movies = namespace('movies');
   components: { MovieThumbnail },
 })
 export default class MovieList extends Vue {
+  @Prop()
+  private genre?: string;
+
   @movies.State
   private movies: Movie[];
 
   @movies.State
   private movieCount: number;
 
-  @movies.Action
-  private retrieveMovies: () => Promise<any>;
+  @movies.State
+  private offset: number;
 
   @movies.Action
-  private retrieveMoreMovies: () => Promise<any>;
+  private retrieveMoreMovies: (params: URLSearchParams) => Promise<Movie[]>;
 
-  private async intersected(): Promise<any> {
-    await this.retrieveMoreMovies();
-  }
+  private searchParamsService = new SearchParamsService();
 
-  async mounted() {
-    await this.retrieveMovies();
+  private async intersected(): Promise<void> {
+    try {
+      let params;
+      if (this.genre) {
+        params = this.searchParamsService.getSimilarGenreSearchOptions(this.genre, this.offset);
+      } else {
+        params = this.searchParamsService.getRouteQuerySearchOptions(this.$route.query, this.offset);
+      }
+      await this.retrieveMoreMovies(params);
+    } catch (err) {
+      console.warn(err);
+      this.$router.push({ name: 'not-found' });
+    }
   }
 }
 

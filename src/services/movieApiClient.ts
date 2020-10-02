@@ -32,13 +32,13 @@ export class MovieApiClient {
   query(params: URLSearchParams) {
     return Vue.axios.get(this.resource, { params }).catch((error) => {
       console.error(error);
-      throw new Error(`MovieApiService ${error}`);
+      throw new Error(`MovieApiClient ${error}`);
     });
   }
 
   get(id: number) {
     return Vue.axios.get(`${this.resource}/${id}`).catch((error) => {
-      throw new Error(`MovieApiService ${error}`);
+      throw new Error(`MovieApiClient ${error}`);
     });
   }
 }

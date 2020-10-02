@@ -12,8 +12,12 @@
       </div>
       <div class="col col-lg-8">
         <div class="btn-group" role="group" aria-label="Search by">
-          <OptionButton title="Title" :value="title" :active="searchByTitle" @clicked="search" ></OptionButton>
-          <OptionButton title="Genre" :value="genre" :active="searchByGenre" @clicked="search" ></OptionButton>
+          <router-link :to = "{ path:'/', query: { ...this.$route.query, ...{ searchBy: title } } }">
+            <OptionButton title="Title" :value="title" :active="searchByTitle"></OptionButton>
+          </router-link>
+          <router-link :to = "{ path:'/', query: { ...this.$route.query, ...{ searchBy: genre } } }">
+            <OptionButton title="Genre" :value="genre" :active="searchByGenre"></OptionButton>
+          </router-link>
         </div>
       </div>
     </div>
@@ -22,41 +26,41 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue } from 'vue-property-decorator';
 import OptionButton from '@/components/OptionButton.vue';
 import SearchBar from '@/components/SearchBar.vue';
 import Logo from '@/components/Logo.vue';
-import { namespace } from 'vuex-class';
+import { SearchParamsService } from '@/services/searchParamsService';
 import { TITLE, GENRE } from '@/models/Constants';
-
-const movies = namespace('movies');
 
 @Component({
   components: { SearchBar, OptionButton, Logo },
 })
 export default class SearchOptions extends Vue {
-  @movies.State
-  private searchBy: string;
-
-  @movies.Getter
-  private searchByTitle: boolean;
-
-  @movies.Getter
-  private searchByGenre: boolean;
-
-  @movies.Mutation
-  public setSearchBy: (searchBy: string) => void;
-
-  @movies.Action
-  private retrieveMovies: () => Promise<any>;
-
   private readonly title = TITLE;
 
   private readonly genre = GENRE;
 
-  private async search(searchBy: string): Promise<any> {
-    this.setSearchBy(searchBy);
-    await this.retrieveMovies();
+  private searchBy = TITLE;
+
+  private searchParamsService = new SearchParamsService();
+
+  get searchByTitle(): boolean {
+    return this.searchBy === TITLE;
+  }
+
+  get searchByGenre(): boolean {
+    return this.searchBy === GENRE;
+  }
+
+  @Watch('$route', { immediate: true, deep: true })
+  onRouteChange() {
+    try {
+      this.searchBy = this.searchParamsService.getSearchBy(this.$route.query);
+    } catch (err) {
+      console.warn(err);
+      this.$router.push({ name: 'not-found' });
+    }
   }
 }
 

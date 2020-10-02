@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="'/'" >
+  <router-link :to = "{ name: 'home' }">
     <img src="../assets/logo.png" class="logo" alt="Netflix Roulette logo">
   </router-link>
 </template>
