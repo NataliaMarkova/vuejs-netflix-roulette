@@ -6,14 +6,7 @@ import {
 } from 'vuex-module-decorators';
 import { MovieApiService } from '@/services/movieApiService';
 import { Movie } from '@/models/Movie';
-import {
-  TITLE,
-  GENRE,
-  RELEASE,
-  RATING,
-  DESC,
-  LIMIT,
-} from '@/models/Constants';
+import { LIMIT } from '@/models/Constants';
 
 @Module({ namespaced: true })
 class Movies extends VuexModule {
@@ -21,46 +14,9 @@ class Movies extends VuexModule {
 
   movies: Movie[] = [];
 
-  sortBy = RELEASE;
-
-  searchBy = TITLE;
-
-  searchText = '';
-
   movieCount = 0;
 
-  limit = LIMIT;
-
   offset = 0;
-
-  sortOrder = DESC;
-
-  get sortByReleaseDate(): boolean {
-    return this.sortBy === RELEASE;
-  }
-
-  get sortByRating(): boolean {
-    return this.sortBy === RATING;
-  }
-
-  get searchByTitle(): boolean {
-    return this.searchBy === TITLE;
-  }
-
-  get searchByGenre(): boolean {
-    return this.searchBy === GENRE;
-  }
-
-  get params(): URLSearchParams {
-    const params = new URLSearchParams();
-    params.append('offset', this.offset.toString(10));
-    params.append('limit', this.limit.toString(10));
-    params.append('searchBy', this.searchBy);
-    params.append('sortBy', this.sortBy);
-    params.append('sortOrder', this.sortOrder);
-    params.append('search', this.searchText);
-    return params;
-  }
 
   @Mutation
   setMovies(movies: Movie[]): void {
@@ -78,28 +34,13 @@ class Movies extends VuexModule {
   }
 
   @Mutation
-  setSortBy(sortBy: string): void {
-    this.sortBy = sortBy;
-  }
-
-  @Mutation
-  setSearchBy(searchBy: string): void {
-    this.searchBy = searchBy;
-  }
-
-  @Mutation
-  setSearchText(searchText: string): void {
-    this.searchText = searchText.trim();
-  }
-
-  @Mutation
   resetOffset(): void {
     this.offset = 0;
   }
 
   @Mutation
   increaseOffset(): void {
-    this.offset += this.limit;
+    this.offset += LIMIT;
   }
 
   @Action
@@ -109,10 +50,10 @@ class Movies extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async retrieveMovies(): Promise<Movie[]> {
+  async retrieveMovies(params: URLSearchParams): Promise<Movie[]> {
     const { commit } = this.context;
     commit('resetOffset');
-    const { movies, count } = await this.movieApiService.getMovies(this.params);
+    const { movies, count } = await this.movieApiService.getMovies(params);
     commit('setMovies', movies);
     commit('increaseOffset');
     commit('setMovieCount', count);
@@ -120,9 +61,9 @@ class Movies extends VuexModule {
   }
 
   @Action({ rawError: true })
-  async retrieveMoreMovies(): Promise<Movie[]> {
+  async retrieveMoreMovies(params: URLSearchParams): Promise<Movie[]> {
     const { commit } = this.context;
-    const { movies, count } = await this.movieApiService.getMovies(this.params);
+    const { movies, count } = await this.movieApiService.getMovies(params);
     commit('addMovies', movies);
     commit('increaseOffset');
     commit('setMovieCount', count);

@@ -1,5 +1,5 @@
 <template>
-  <router-link :to= "'/movie/' + movie.id">
+  <router-link :to = "{ name: 'movie', params: { id: movie.id } }">
     <div>
       <figure>
         <img :src = "posterPath">

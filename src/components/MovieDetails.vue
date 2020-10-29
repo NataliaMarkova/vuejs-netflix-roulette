@@ -5,7 +5,7 @@
         <Logo/>
       </div>
       <div class="col col-md-2 search-icon">
-        <router-link :to="'/'" ><i class="fas fa-search"></i></router-link>
+        <router-link :to = "{ name: 'home' }"><i class="fas fa-search"></i></router-link>
       </div>
     </div>
     <div class="row">
@@ -52,29 +52,13 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Movie } from '@/models/Movie';
 import Logo from '@/components/Logo.vue';
-import { namespace } from 'vuex-class';
-
-const movies = namespace('movies');
 
 @Component({
   components: { Logo },
 })
 export default class MovieDetails extends Vue {
   @Prop()
-  private id: number;
-
-  @movies.Action
-  private getMovieById: (id: number) => Promise<Movie>;
-
-  private movie: Movie = new Movie();
-
-  mounted() {
-    this.retreiveMovieData();
-  }
-
-  private retreiveMovieData(): void {
-    this.getMovieById(this.id).then((data) => { this.movie = data; });
-  }
+  private movie: Movie;
 }
 
 </script>

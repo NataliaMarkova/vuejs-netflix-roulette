@@ -11,8 +11,12 @@
       </div>
       <div class="col col-lg-3">
         <div class="btn-group" role="group" aria-label="Sort by">
-          <OptionButton title="Release date" :value = "release" :active = "sortByReleaseDate" @clicked = "sort" ></OptionButton>
-          <OptionButton title="Rating" :value = "rating" :active = "sortByRating" @clicked = "sort" ></OptionButton>
+          <router-link :to = "{ path:'/', query: { ...this.$route.query, ...{ sortBy: release } } }">
+            <OptionButton title="Release date" :value = "release" :active = "sortByReleaseDate"></OptionButton>
+          </router-link>
+          <router-link :to = "{ path:'/', query: { ...this.$route.query, ...{ sortBy: rating } } }">
+            <OptionButton title="Rating" :value = "rating" :active = "sortByRating"></OptionButton>
+          </router-link>
         </div>
       </div>
     </div>
@@ -21,9 +25,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Watch, Vue } from 'vue-property-decorator';
 import MovieList from '@/components/MovieList.vue';
 import OptionButton from '@/components/OptionButton.vue';
+import { SearchParamsService } from '@/services/searchParamsService';
 import { namespace } from 'vuex-class';
 import { RELEASE, RATING } from '@/models/Constants';
 
@@ -36,28 +41,30 @@ export default class SearchResult extends Vue {
   @movies.State('movieCount')
   private count: number;
 
-  @movies.State
-  private sortBy: number;
-
-  @movies.Getter
-  private sortByReleaseDate: boolean;
-
-  @movies.Getter
-  private sortByRating: boolean;
-
-  @movies.Mutation
-  private setSortBy: (sortBy: string) => void
-
-  @movies.Action
-  private retrieveMovies: () => Promise<any>;
-
   private readonly release = RELEASE;
 
   private readonly rating = RATING;
 
-  private async sort(sortBy: string): Promise<any> {
-    this.setSortBy(sortBy);
-    await this.retrieveMovies();
+  private sortBy = RELEASE;
+
+  private searchParamsService = new SearchParamsService();
+
+  get sortByReleaseDate(): boolean {
+    return this.sortBy === RELEASE;
+  }
+
+  get sortByRating(): boolean {
+    return this.sortBy === RATING;
+  }
+
+  @Watch('$route', { immediate: true, deep: true })
+  onRouteChange() {
+    try {
+      this.sortBy = this.searchParamsService.getSortBy(this.$route.query);
+    } catch (err) {
+      console.warn(err);
+      this.$router.push({ name: 'not-found' });
+    }
   }
 }
 
